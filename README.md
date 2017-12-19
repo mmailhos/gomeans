@@ -52,6 +52,12 @@ func RunWithDrawing(initialDataset []Point, k int) []Cluster
 It is relatively efficient: O(2tkn), where n is # objects, k is # clusters, and t  is # iterations. Normally, k, t, d << n.
 Check out the references for more details about the algorithm.
 
+
+### Roadmap
+
+I see a couple of optimizations to do and cleaning exposed functions returned structures.
+Coming really soon.
+
 ### References
 * [Data Clustering Algorithms](https://sites.google.com/site/dataclusteringalgorithms/k-means-clustering-algorithm)
 * [K-means clustering](https://en.wikipedia.org/wiki/K-means_clustering)
