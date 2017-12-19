@@ -41,27 +41,42 @@ func initClusters(k int) (clusters []Cluster) {
 	return
 }
 
-func iterate(dataset []Element, clusters []Cluster) ([]Cluster, bool) {
-	hasChanged := false
-	for i := 0; i < len(dataset); i++ {
-		var minDist float64
-		var updatedClusterIndex int
-		for j := 0; j < len(clusters); j++ {
-			tmpDist := dataset[i].Coordinate.Distance(clusters[j].Center)
-			if minDist == 0 || tmpDist < minDist {
-				minDist = tmpDist
-				updatedClusterIndex = j
-			}
-		}
-		clusters[updatedClusterIndex].Elements = append(clusters[updatedClusterIndex].Elements, dataset[i])
-		if dataset[i].ClusterID != updatedClusterIndex {
-			dataset[i].ClusterID = updatedClusterIndex
-			hasChanged = true
-		}
+func repositionCenters(clusters []Cluster) {
+	for i := 0; i < len(clusters); i++ {
+		clusters[i].repositionCenter()
 	}
-	return clusters, hasChanged
 }
 
+/*Run runs the k-means algorithm given an array of coordinates and a specific k. Returns a slice of Clusters defined
+by their Center{X,Y float64} and a slice of Elements{Coordinates{X,Y}}*/
+func Run(initialDataset []Point, k int) []Cluster {
+	dataset := elementsFromPoints(initialDataset)
+	clusters := initClusters(k)
+
+	for hasChanged := true; hasChanged; {
+		hasChanged = false
+		for i := 0; i < len(dataset); i++ {
+			var minDist float64
+			var updatedClusterIndex int
+			for j := 0; j < len(clusters); j++ {
+				tmpDist := dataset[i].Coordinate.Distance(clusters[j].Center)
+				if minDist == 0 || tmpDist < minDist {
+					minDist = tmpDist
+					updatedClusterIndex = j
+				}
+			}
+			clusters[updatedClusterIndex].Elements = append(clusters[updatedClusterIndex].Elements, dataset[i])
+			if dataset[i].ClusterID != updatedClusterIndex {
+				dataset[i].ClusterID = updatedClusterIndex
+				hasChanged = true
+			}
+		}
+		if hasChanged {
+			repositionCenters(clusters)
+		}
+	}
+	return clusters
+}
 
 /*RunWithDrawing runs the k-means algorithm given an array of coordinates and a specific k. Output is some charts in
 chart folder*/
@@ -90,8 +105,8 @@ func RunWithDrawing(initialDataset []Point, k int) []Cluster {
 			}
 		}
 		draw(clusters, "charts/"+strconv.Itoa(p)+".png")
-		for i := 0; i < len(clusters); i++ {
-			clusters[i].repositionCenter()
+		if hasChanged {
+			repositionCenters(clusters)
 		}
 	}
 	return clusters
