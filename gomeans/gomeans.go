@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-//Element struct represents a single point. It has coordinates (Point{X,Y float64}) and is part of a cluster
-type Element struct {
-	Coordinate Point
-	ClusterID  int
-}
-
 func centersX(clusters []Cluster) (centersX []float64) {
 	for i := 0; i < len(clusters); i++ {
 		centersX = append(centersX, clusters[i].Center.X)
@@ -26,17 +20,10 @@ func centersY(clusters []Cluster) (centersY []float64) {
 	return
 }
 
-func elementsFromPoints(initialDataset []Point) (dataset []Element) {
-	for i := 0; i < len(initialDataset); i++ {
-		dataset = append(dataset, Element{Coordinate: initialDataset[i], ClusterID: 0})
-	}
-	return
-}
-
 func initClusters(k int) (clusters []Cluster) {
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < k; i++ {
-		clusters = append(clusters, Cluster{Point{rand.Float64(), rand.Float64()}, []Element{}})
+		clusters = append(clusters, Cluster{Point{rand.Float64(), rand.Float64()}, []Point{}})
 	}
 	return
 }
@@ -48,9 +35,9 @@ func repositionCenters(clusters []Cluster) {
 }
 
 /*Run runs the k-means algorithm given an array of coordinates and a specific k. Returns a slice of Clusters defined
-by their Center{X,Y float64} and a slice of Elements{Coordinates{X,Y}}*/
-func Run(initialDataset []Point, k int) []Cluster {
-	dataset := elementsFromPoints(initialDataset)
+by their Center (type Point) and a slice of Points representing points in that cluster.*/
+func Run(dataset []Point, k int) []Cluster {
+	pointsClusterIndex := make([]int, len(dataset))
 	clusters := initClusters(k)
 
 	for hasChanged := true; hasChanged; {
@@ -59,15 +46,15 @@ func Run(initialDataset []Point, k int) []Cluster {
 			var minDist float64
 			var updatedClusterIndex int
 			for j := 0; j < len(clusters); j++ {
-				tmpDist := dataset[i].Coordinate.Distance(clusters[j].Center)
+				tmpDist := dataset[i].Distance(clusters[j].Center)
 				if minDist == 0 || tmpDist < minDist {
 					minDist = tmpDist
 					updatedClusterIndex = j
 				}
 			}
-			clusters[updatedClusterIndex].Elements = append(clusters[updatedClusterIndex].Elements, dataset[i])
-			if dataset[i].ClusterID != updatedClusterIndex {
-				dataset[i].ClusterID = updatedClusterIndex
+			clusters[updatedClusterIndex].Points = append(clusters[updatedClusterIndex].Points, dataset[i])
+			if pointsClusterIndex[i] != updatedClusterIndex {
+				pointsClusterIndex[i] = updatedClusterIndex
 				hasChanged = true
 			}
 		}
@@ -78,10 +65,10 @@ func Run(initialDataset []Point, k int) []Cluster {
 	return clusters
 }
 
-/*RunWithDrawing runs the k-means algorithm given an array of coordinates and a specific k. Output is some charts in
+/*RunWithDrawing runs the k-means algorithm given an array of coordinates and a specific k. Output charts in
 chart folder*/
-func RunWithDrawing(initialDataset []Point, k int) []Cluster {
-	dataset := elementsFromPoints(initialDataset)
+func RunWithDrawing(dataset []Point, k int) []Cluster {
+	pointsClusterIndex := make([]int, len(dataset))
 	clusters := initClusters(k)
 	hasChanged := true
 
@@ -92,15 +79,15 @@ func RunWithDrawing(initialDataset []Point, k int) []Cluster {
 			var minDist float64
 			var updatedClusterIndex int
 			for j := 0; j < len(clusters); j++ {
-				tmpDist := dataset[i].Coordinate.Distance(clusters[j].Center)
+				tmpDist := dataset[i].Distance(clusters[j].Center)
 				if minDist == 0 || tmpDist < minDist {
 					minDist = tmpDist
 					updatedClusterIndex = j
 				}
 			}
-			clusters[updatedClusterIndex].Elements = append(clusters[updatedClusterIndex].Elements, dataset[i])
-			if dataset[i].ClusterID != updatedClusterIndex {
-				dataset[i].ClusterID = updatedClusterIndex
+			clusters[updatedClusterIndex].Points = append(clusters[updatedClusterIndex].Points, dataset[i])
+			if pointsClusterIndex[i] != updatedClusterIndex {
+				pointsClusterIndex[i] = updatedClusterIndex
 				hasChanged = true
 			}
 		}

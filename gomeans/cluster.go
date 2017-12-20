@@ -1,33 +1,33 @@
 package gomeans
 
-//Cluster struct composed of a center Point{X,Y float64} and of Elements
+//Cluster struct composed of a center Point{X,Y float64} and of Points
 type Cluster struct {
-	Center   Point
-	Elements []Element
+	Center Point
+	Points []Point
 }
 
-func (cluster *Cluster) elementsXValues() (elementsXValues []float64) {
-	for i := 0; i < len(cluster.Elements); i++ {
-		elementsXValues = append(elementsXValues, cluster.Elements[i].Coordinate.X)
+func (cluster *Cluster) pointsXValues() (pointsXValues []float64) {
+	for i := 0; i < len(cluster.Points); i++ {
+		pointsXValues = append(pointsXValues, cluster.Points[i].X)
 	}
 	return
 }
 
-func (cluster *Cluster) elementsYValues() (elementsYValues []float64) {
-	for i := 0; i < len(cluster.Elements); i++ {
-		elementsYValues = append(elementsYValues, cluster.Elements[i].Coordinate.Y)
+func (cluster *Cluster) pointsYValues() (pointsYValues []float64) {
+	for i := 0; i < len(cluster.Points); i++ {
+		pointsYValues = append(pointsYValues, cluster.Points[i].Y)
 	}
 	return
 }
 
 func (cluster *Cluster) repositionCenter() {
-	var clusterCount = len(cluster.Elements)
 	var x, y float64
+	var clusterCount = len(cluster.Points)
 
 	for i := 0; i < clusterCount; i++ {
-		x = x + cluster.Elements[i].Coordinate.X
-		y = y + cluster.Elements[i].Coordinate.Y
+		x = x + cluster.Points[i].X
+		y = y + cluster.Points[i].Y
 	}
-	cluster.Elements = []Element{}
+	cluster.Points = []Point{}
 	cluster.Center = Point{x / float64(clusterCount), y / float64(clusterCount)}
 }

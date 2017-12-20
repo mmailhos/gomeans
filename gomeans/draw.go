@@ -15,8 +15,8 @@ func draw(clusters []Cluster, outfile string) {
 				Show:        true,
 				StrokeWidth: chart.Disabled,
 				DotWidth:    5},
-			XValues: clusters[i].elementsXValues(),
-			YValues: clusters[i].elementsYValues(),
+			XValues: clusters[i].pointsXValues(),
+			YValues: clusters[i].pointsYValues(),
 		})
 	}
 	series = append(series, chart.ContinuousSeries{
