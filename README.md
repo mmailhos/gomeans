@@ -23,7 +23,7 @@ $ go run main.go -k 3 -n 800
 ```
 
 ### Documentation
-There are two simple structures: a `Point`, that can be displayed using their X and Y. And a `Cluster`, defined by a center and a slice of `Point`.
+There are two simple structures: a `Point`, that can be displayed using its X and Y. And a `Cluster`, defined by a center and a slice of `Point`.
 
 ```go
 type Point struct {
@@ -37,12 +37,14 @@ type Cluster struct {
 }
 ```
 
-Then, there are basically two main exposed functrions.
+Then, there are basically two main exposed functions.
 `Run` is a simple function that returns a slice of `Cluster` given a dataset of `Point` with `k int`, the number of wanted clusters.
-And `RunWithDrawing` that does the same thing except that it also generates graphs of each step of the algorithm in the `charts/` folder, as PNG.
-
 ```go
 func Run(dataset []Point, k int) []Cluster
+```
+
+And `RunWithDrawing` that does the same thing except that it also generates graphs of each step of the algorithm in the `charts/` folder, as PNG.
+```go
 func RunWithDrawing(dataset []Point, k int) []Cluster
 ```
 
